@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>更改頭像</title>
+</head>
+<body>
+    <h1>更改頭像</h1>
+    <form id="avatarForm" enctype="multipart/form-data">
+        <input type="file" id="avatarInput" name="avatar" accept="image/*">
+        <input type="submit" value="上傳頭像">
+    </form>
+    <img id="userAvatar" src="" alt="使用者頭像">
+    
+    <script>
+        // 選擇表單元素
+        const avatarForm = document.getElementById('avatarForm');
+        const avatarInput = document.getElementById('avatarInput');
+        const userAvatar = document.getElementById('userAvatar');
+
+        // 當表單提交時
+        avatarForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // 獲取選擇的頭像文件
+            const avatarFile = avatarInput.files[0];
+
+            // 創建 FormData 對象，用於上傳文件
+            const formData = new FormData();
+            formData.append('avatar', avatarFile);
+
+            // 發送 POST 請求到後端 API 以更改頭像
+            fetch('/api/user/:UserID/avatar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 更新前端顯示的使用者頭像
+                userAvatar.src = data.avatarPath; // 根據後端 API 返回的路徑更新頭像
+            })
+            .catch(error => {
+                console.error('無法更改頭像:', error);
+            });
+        });
+    </script>
+</body>
+</html>
